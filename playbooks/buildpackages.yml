@@ -1,4 +1,0 @@
-- hosts: build_hosts:repo_servers
-  roles:
-    - bloodymage.rebeldream.package_builder_emacs
-    - bloodymage.rebeldream.package_builder_mythtv
