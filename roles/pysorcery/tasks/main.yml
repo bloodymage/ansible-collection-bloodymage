@@ -1,0 +1,56 @@
+---
+- name: "Include OS-specific variables."
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+        - "debian.yml"
+      paths:
+        - "vars"
+  become: no
+  tags:
+    - pysorcery
+
+- name: "Install applications"
+  package:
+    name: "{{ packages }}"
+    state: present
+  become: yes
+  tags:
+    - pysorcery
+
+- name: Download pySorcery
+  git:
+    repo: https://github.com/bloodymage/pysorcery.git
+    dest: /usr/local/src/pysorcery
+  become: yes
+  tags:
+    - pysorcery
+
+- name: Install pySorcery
+  file:
+    src: "/usr/local/src/pysorcery/src/pysorcery"
+    dest: "/usr/local/lib/python{{ ansible_python_version.split('.')[0] }}.{{ ansible_python_version.split('.')[1] }}/dist-packages/pysorcery"
+    owner: root
+    group: root
+    state: link
+  become: yes    
+  tags:
+    - pysorcery
+
+- name: Create Symlinks to executables
+  file:
+    src: "/usr/local/src/pysorcery/bin/py{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    state: link
+  loop:
+    - archive
+    - gaze
+  become: yes
+  tags:
+    - pysorcery
+  

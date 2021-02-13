@@ -1,0 +1,6 @@
+---
+# defaults file for pysorcery
+debian_packages:
+  - python3-distro
+
+packages: "{{ debian_packages }}"
